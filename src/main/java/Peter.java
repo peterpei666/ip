@@ -29,32 +29,36 @@ public class Peter {
                 System.out.println(line);
 
                 try {
-                    if (input.equalsIgnoreCase("bye")) {
+                    Command command = Command.fromString(input);
+
+                    switch (command) {
+                    case BYE:
                         System.out.println("     Bye. Hope to see you again soon!");
                         System.out.println(line);
+                        return; // 结束程序
+                    case LIST:
+                        handleList(tasks);
                         break;
-                    } else if (input.equalsIgnoreCase("list")) {
-                        if (tasks.isEmpty()) {
-                            System.out.println("     Your task list is currently empty!");
-                        } else {
-                            System.out.println("     Here are the tasks in your list:");
-                            for (int i = 0; i < tasks.size(); i++) {
-                                System.out.println("     " + (i + 1) + "." + tasks.get(i));
-                            }
-                        }
-                    } else if (input.startsWith("mark")) {
+                    case MARK:
                         handleMark(input, tasks);
-                    } else if (input.startsWith("unmark")) {
+                        break;
+                    case UNMARK:
                         handleUnmark(input, tasks);
-                    } else if (input.startsWith("todo")) {
+                        break;
+                    case TODO:
                         handleTodo(input, tasks);
-                    } else if (input.startsWith("deadline")) {
+                        break;
+                    case DEADLINE:
                         handleDeadline(input, tasks);
-                    } else if (input.startsWith("event")) {
+                        break;
+                    case EVENT:
                         handleEvent(input, tasks);
-                    } else if (input.startsWith("delete")) {
+                        break;
+                    case DELETE:
                         handleDelete(input, tasks);
-                    } else {
+                        break;
+                    case UNKNOWN:
+                    default:
                         throw new PeterException("OOPS!!! I'm sorry, but I don't know what that means :-(");
                     }
                 } catch (PeterException e) {
@@ -62,6 +66,17 @@ public class Peter {
                 }
 
                 System.out.println(line);
+            }
+        }
+    }
+
+    private static void handleList(List<Task> tasks) {
+        if (tasks.isEmpty()) {
+            System.out.println("     Your task list is currently empty!");
+        } else {
+            System.out.println("     Here are the tasks in your list:");
+            for (int i = 0; i < tasks.size(); i++) {
+                System.out.println("     " + (i + 1) + "." + tasks.get(i));
             }
         }
     }
