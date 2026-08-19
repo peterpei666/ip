@@ -52,6 +52,8 @@ public class Peter {
                         handleDeadline(input, tasks);
                     } else if (input.startsWith("event")) {
                         handleEvent(input, tasks);
+                    } else if (input.startsWith("delete")) {
+                        handleDelete(input, tasks);
                     } else {
                         throw new PeterException("OOPS!!! I'm sorry, but I don't know what that means :-(");
                     }
@@ -142,6 +144,25 @@ public class Peter {
         Task task = new Event(parts[0].trim(), timeParts[0].trim(), timeParts[1].trim());
         tasks.add(task);
         printTaskAdded(task, tasks.size());
+    }
+
+    private static void handleDelete(String input, List<Task> tasks) throws PeterException {
+        String[] parts = input.split("\\s+");
+        if (parts.length < 2) {
+            throw new PeterException("OOPS!!! Please specify the task number to delete.");
+        }
+        try {
+            int taskIndex = Integer.parseInt(parts[1]) - 1;
+            if (taskIndex < 0 || taskIndex >= tasks.size()) {
+                throw new PeterException("OOPS!!! Task number " + parts[1] + " does not exist.");
+            }
+            Task removedTask = tasks.remove(taskIndex);
+            System.out.println("     Noted. I've removed this task:");
+            System.out.println("       " + removedTask);
+            System.out.println("     Now you have " + tasks.size() + " tasks in the list.");
+        } catch (NumberFormatException e) {
+            throw new PeterException("OOPS!!! Task index must be a valid integer.");
+        }
     }
 
     private static void printTaskAdded(Task task, int count) {
