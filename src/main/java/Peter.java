@@ -49,14 +49,31 @@ public class Peter {
                         System.out.println("     OK, I've marked this task as not done yet:");
                         System.out.println("       " + task);
                     }
-                } else {
-                    Task newTask = new Task(input);
-                    tasks.add(newTask);
-                    System.out.println("     added: " + input);
+                } else if (input.startsWith("todo ")) {
+                    Task task = new Todo(input.substring(5));
+                    tasks.add(task);
+                    printTaskAdded(task, tasks.size());
+                } else if (input.startsWith("deadline ")) {
+                    String[] parts = input.substring(9).split(" /by ");
+                    Task task = new Deadline(parts[0], parts[1]);
+                    tasks.add(task);
+                    printTaskAdded(task, tasks.size());
+                } else if (input.startsWith("event ")) {
+                    String[] parts = input.substring(6).split(" /from ");
+                    String[] timeParts = parts[1].split(" /to ");
+                    Task task = new Event(parts[0], timeParts[0], timeParts[1]);
+                    tasks.add(task);
+                    printTaskAdded(task, tasks.size());
                 }
 
                 System.out.println(line);
             }
         }
+    }
+
+    private static void printTaskAdded(Task task, int count) {
+        System.out.println("     Got it. I've added this task:");
+        System.out.println("       " + task);
+        System.out.println("     Now you have " + count + " tasks in the list.");
     }
 }
