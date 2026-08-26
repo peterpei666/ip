@@ -1,5 +1,11 @@
 package peter.storage;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 import peter.exception.PeterException;
 import peter.task.Deadline;
 import peter.task.Event;
@@ -7,20 +13,27 @@ import peter.task.Task;
 import peter.task.TaskList;
 import peter.task.Todo;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
-
+/**
+ * Handles reading tasks from and writing tasks to the local file system.
+ */
 public class Storage {
     private final String filePath;
     
+    /**
+     * Constructs a Storage object with a target file path.
+     *
+     * @param filePath Relative or absolute path to the data file.
+     */
     public Storage(String filePath) {
         this.filePath = filePath;
     }
 
+    /**
+     * Loads tasks from the data file.
+     *
+     * @return List of loaded tasks.
+     * @throws PeterException If the file cannot be read.
+     */
     public List<Task> load() throws PeterException {
         List<Task> tasks = new ArrayList<>();
         File file = new File(filePath);
@@ -41,7 +54,6 @@ public class Storage {
                         tasks.add(task);
                     }
                 } catch (Exception e) {
-                    // 忽略损坏数据
                 }
             }
         } catch (IOException e) {
@@ -50,6 +62,11 @@ public class Storage {
         return tasks;
     }
 
+    /**
+     * Saves the current task list to the data file.
+     *
+     * @param taskList The TaskList containing tasks to be persisted.
+     */
     public void save(TaskList taskList) {
         File file = new File(filePath);
         File parentDir = file.getParentFile();
