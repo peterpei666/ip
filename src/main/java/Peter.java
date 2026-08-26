@@ -1,4 +1,3 @@
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -12,7 +11,7 @@ public class Peter {
                     + "|  __/| |___  | | | |___|  _ < \n"
                     + "|_|   |_____| |_| |_____|_| \\_\\\n";
 
-        List<Task> tasks = new ArrayList<>();
+        List<Task> tasks = Storage.load();
 
         System.out.println(logo);
         System.out.println(" Hello! I'm Peter.");
@@ -79,6 +78,7 @@ public class Peter {
                 System.out.println("     " + (i + 1) + "." + tasks.get(i));
             }
         }
+        Storage.save(tasks);
     }
 
     private static void handleMark(String input, List<Task> tasks) throws PeterException {
@@ -98,6 +98,7 @@ public class Peter {
         } catch (NumberFormatException e) {
             throw new PeterException("OOPS!!! Task index must be a valid integer.");
         }
+        Storage.save(tasks);
     }
 
     private static void handleUnmark(String input, List<Task> tasks) throws PeterException {
@@ -117,6 +118,7 @@ public class Peter {
         } catch (NumberFormatException e) {
             throw new PeterException("OOPS!!! Task index must be a valid integer.");
         }
+        Storage.save(tasks);
     }
 
     private static void handleTodo(String input, List<Task> tasks) throws PeterException {
@@ -127,6 +129,7 @@ public class Peter {
         Task task = new Todo(description);
         tasks.add(task);
         printTaskAdded(task, tasks.size());
+        Storage.save(tasks);
     }
 
     private static void handleDeadline(String input, List<Task> tasks) throws PeterException {
@@ -141,6 +144,7 @@ public class Peter {
         Task task = new Deadline(parts[0].trim(), parts[1].trim());
         tasks.add(task);
         printTaskAdded(task, tasks.size());
+        Storage.save(tasks);
     }
 
     private static void handleEvent(String input, List<Task> tasks) throws PeterException {
@@ -159,6 +163,7 @@ public class Peter {
         Task task = new Event(parts[0].trim(), timeParts[0].trim(), timeParts[1].trim());
         tasks.add(task);
         printTaskAdded(task, tasks.size());
+        Storage.save(tasks);
     }
 
     private static void handleDelete(String input, List<Task> tasks) throws PeterException {
@@ -178,6 +183,7 @@ public class Peter {
         } catch (NumberFormatException e) {
             throw new PeterException("OOPS!!! Task index must be a valid integer.");
         }
+        Storage.save(tasks);
     }
 
     private static void printTaskAdded(Task task, int count) {
