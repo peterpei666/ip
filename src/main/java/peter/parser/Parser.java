@@ -6,8 +6,18 @@ import peter.task.Event;
 import peter.task.Task;
 import peter.task.Todo;
 
+/**
+ * Parses user input strings into corresponding command tasks or parameters.
+ */
 public class Parser {
 
+    /**
+     * Parses the user input for creating a Todo task.
+     *
+     * @param input Raw user input string.
+     * @return A new Todo object.
+     * @throws PeterException If the description is empty.
+     */
     public static Task parseTodo(String input) throws PeterException {
         String description = input.substring(4).trim();
         if (description.isEmpty()) {
@@ -16,6 +26,13 @@ public class Parser {
         return new Todo(description);
     }
 
+    /**
+     * Parses the user input for creating a Deadline task.
+     *
+     * @param input Raw user input string.
+     * @return A new Deadline object.
+     * @throws PeterException If the description is empty.
+     */
     public static Task parseDeadline(String input) throws PeterException {
         String content = input.substring(8).trim();
         if (content.isEmpty()) {
@@ -28,6 +45,13 @@ public class Parser {
         return new Deadline(parts[0].trim(), parts[1].trim());
     }
 
+    /**
+     * Parses the user input for creating an Event task.
+     *
+     * @param input Raw user input string.
+     * @return A new Event object.
+     * @throws PeterException If the description is empty.
+     */
     public static Task parseEvent(String input) throws PeterException {
         String content = input.substring(5).trim();
         if (content.isEmpty()) {
@@ -44,6 +68,13 @@ public class Parser {
         return new Event(parts[0].trim(), timeParts[0].trim(), timeParts[1].trim());
     }
 
+    /**
+     * Parses the zero-based index from the user input.
+     *
+     * @param input Raw user input string containing a task index.
+     * @return Zero-based task index.
+     * @throws PeterException If the index format is invalid or missing.
+     */
     public static int parseIndex(String input) throws PeterException {
         String[] parts = input.split("\\s+");
         if (parts.length < 2) {
