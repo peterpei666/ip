@@ -1,5 +1,8 @@
 package peter;
 
+import java.time.LocalDate;
+import java.util.List;
+
 import peter.command.Command;
 import peter.exception.PeterException;
 import peter.parser.Parser;
@@ -64,6 +67,9 @@ public class Peter {
                         break;
                     case DELETE:
                         handleDelete(fullCommand);
+                        break;
+                    case VIEW: 
+                        handleView(fullCommand);
                         break;
                     default:
                         throw new PeterException("OOPS!!! I'm sorry, but I don't know what that means :-(");
@@ -137,6 +143,18 @@ public class Peter {
         ui.showMessage("Got it. I've added this task:");
         ui.showMessage("  " + task);
         ui.showMessage("Now you have " + tasks.size() + " tasks in the list.");
+    }
+
+    /**
+     * Handles the view command to list all tasks occurring on a specific date.
+     *
+     * @param fullCommand Raw command string entered by the user (e.g., "view 2019-12-02").
+     * @throws PeterException If the date format is invalid or parameter is missing.
+     */
+    private void handleView(String fullCommand) throws PeterException {
+        LocalDate date = Parser.parseViewDate(fullCommand);
+        List<Task> matchingTasks = tasks.getTasksOnDate(date);
+        ui.showTasksOnDate(matchingTasks);
     }
 
     public static void main(String[] args) {

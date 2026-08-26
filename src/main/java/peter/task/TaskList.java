@@ -1,5 +1,6 @@
 package peter.task;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import peter.exception.PeterException;
@@ -58,5 +59,24 @@ public class TaskList {
 
     public Task get(int index) {
         return tasks.get(index);
+    }
+
+    /**
+     * Finds and prints tasks that fall on the specified date.
+     *
+     * @param date Target date to filter tasks.
+     * @return List of matching tasks on that date.
+     */
+    public List<Task> getTasksOnDate(LocalDate date) {
+        List<Task> matchingTasks = new ArrayList<>();
+        for (Task task : tasks) {
+            if (task instanceof Deadline) {
+                Deadline deadline = (Deadline) task;
+                if (deadline.getBy().toLocalDate().equals(date)) {
+                    matchingTasks.add(deadline);
+                }
+            }
+        }
+        return matchingTasks;
     }
 }

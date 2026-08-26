@@ -1,6 +1,8 @@
 package peter.ui;
 
+import java.util.List;
 import java.util.Scanner;
+import peter.task.Task;
 
 public class Ui {
     private static final String LINE = "    ____________________________________________________________";
@@ -34,6 +36,22 @@ public class Ui {
 
     public void showLoadingError() {
         System.out.println("     [Warning] Failed to load data from storage. Starting with empty list.");
+    }
+
+    /**
+     * Prints tasks found on a specific date.
+     *
+     * @param tasks List of tasks matching the date.
+     */
+    public void showTasksOnDate(List<Task> tasks) {
+        if (tasks.isEmpty()) {
+            System.out.println("     No tasks found on this date!");
+            return;
+        }
+        System.out.println("     Here are the tasks on this date:");
+        for (int i = 0; i < tasks.size(); i++) {
+            System.out.println("     " + (i + 1) + "." + tasks.get(i));
+        }
     }
 
     public String readCommand() {

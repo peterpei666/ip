@@ -9,6 +9,7 @@ public enum Command {
     DEADLINE,
     EVENT,
     DELETE,
+    VIEW,
     UNKNOWN;
 
     /**
