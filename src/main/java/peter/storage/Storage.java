@@ -1,3 +1,12 @@
+package peter.storage;
+
+import peter.exception.PeterException;
+import peter.task.Deadline;
+import peter.task.Event;
+import peter.task.Task;
+import peter.task.TaskList;
+import peter.task.Todo;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;

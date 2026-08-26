@@ -1,3 +1,11 @@
+package peter.parser;
+
+import peter.exception.PeterException;
+import peter.task.Deadline;
+import peter.task.Event;
+import peter.task.Task;
+import peter.task.Todo;
+
 public class Parser {
 
     public static Task parseTodo(String input) throws PeterException {
