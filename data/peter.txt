@@ -3,3 +3,5 @@ T | 0 | 2
 D | 0 | return book | 2019-12-02 1800
 D | 0 | return book | 2019-12-02 1800
 D | 0 | return book | 2019-12-04 2359
+T | 0 | book
+T | 0 | read book

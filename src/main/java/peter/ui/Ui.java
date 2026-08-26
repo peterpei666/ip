@@ -54,6 +54,22 @@ public class Ui {
         }
     }
 
+    /**
+     * Prints the list of tasks matching a search keyword.
+     *
+     * @param matchingTasks List of tasks that matched the search query.
+     */
+    public void showFoundTasks(List<Task> matchingTasks) {
+        if (matchingTasks.isEmpty()) {
+            System.out.println("     No matching tasks found in your list!");
+            return;
+        }
+        System.out.println("     Here are the matching tasks in your list:");
+        for (int i = 0; i < matchingTasks.size(); i++) {
+            System.out.println("     " + (i + 1) + "." + matchingTasks.get(i));
+        }
+    }
+
     public String readCommand() {
         if (scanner.hasNextLine()) {
             return scanner.nextLine().trim();

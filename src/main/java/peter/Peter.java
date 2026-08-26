@@ -71,6 +71,9 @@ public class Peter {
                     case VIEW: 
                         handleView(fullCommand);
                         break;
+                    case FIND:
+                        handleFind(fullCommand);
+                        break;
                     default:
                         throw new PeterException("OOPS!!! I'm sorry, but I don't know what that means :-(");
                 }
@@ -137,6 +140,18 @@ public class Peter {
         ui.showMessage("Noted. I've removed this task:");
         ui.showMessage("  " + removedTask);
         ui.showMessage("Now you have " + tasks.size() + " tasks in the list.");
+    }
+
+    /**
+     * Handles the find command by searching tasks matching the keyword.
+     *
+     * @param fullCommand Raw command input string.
+     * @throws PeterException If keyword is missing.
+     */
+    private void handleFind(String fullCommand) throws PeterException {
+        String keyword = Parser.parseFindKeyword(fullCommand);
+        List<Task> matchingTasks = tasks.findTasks(keyword);
+        ui.showFoundTasks(matchingTasks);
     }
 
     private void printTaskAdded(Task task) {

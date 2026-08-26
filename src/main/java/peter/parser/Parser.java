@@ -106,4 +106,19 @@ public class Parser {
             throw new PeterException("OOPS!!! Invalid date format. Please use yyyy-MM-dd (e.g., 2019-12-02).");
         }
     }
+
+    /**
+     * Parses the search keyword from the find command.
+     *
+     * @param input Full command input string (e.g., "find book").
+     * @return The keyword string to search for.
+     * @throws PeterException If the keyword is missing or empty.
+     */
+    public static String parseFindKeyword(String input) throws PeterException {
+        String[] parts = input.trim().split("\\s+", 2);
+        if (parts.length < 2 || parts[1].trim().isEmpty()) {
+            throw new PeterException("OOPS!!! The description of a find command cannot be empty.");
+        }
+        return parts[1].trim();
+    }
 }

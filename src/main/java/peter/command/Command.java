@@ -10,6 +10,7 @@ public enum Command {
     EVENT,
     DELETE,
     VIEW,
+    FIND,
     UNKNOWN;
 
     /**
