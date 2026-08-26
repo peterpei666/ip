@@ -1,5 +1,7 @@
 package peter.parser;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import peter.exception.PeterException;
 import peter.task.Deadline;
 import peter.task.Event;
@@ -27,21 +29,20 @@ public class Parser {
     }
 
     /**
-     * Parses the user input for creating a Deadline task.
+     * Parses the command for creating a Deadline task.
      *
-     * @param input Raw user input string.
+     * @param input Raw command string e.g., "deadline return book /by 2019-12-02 1800"
      * @return A new Deadline object.
-     * @throws PeterException If the description is empty.
+     * @throws PeterException If description or /by date is missing.
      */
     public static Task parseDeadline(String input) throws PeterException {
-        String content = input.substring(8).trim();
-        if (content.isEmpty()) {
-            throw new PeterException("OOPS!!! The description of a deadline cannot be empty.");
-        }
-        String[] parts = content.split(" /by ");
+        String body = input.substring(8).trim();
+        String[] parts = body.split(" /by ", 2);
+        
         if (parts.length < 2 || parts[0].trim().isEmpty() || parts[1].trim().isEmpty()) {
-            throw new PeterException("OOPS!!! Please specify both description and /by time.");
+            throw new PeterException("OOPS!!! The description and date of a deadline cannot be empty.");
         }
+        
         return new Deadline(parts[0].trim(), parts[1].trim());
     }
 
@@ -84,6 +85,25 @@ public class Parser {
             return Integer.parseInt(parts[1]) - 1;
         } catch (NumberFormatException e) {
             throw new PeterException("OOPS!!! Task index must be a valid integer.");
+        }
+    }
+
+    /**
+     * Parses the date string from the user input for the view command.
+     *
+     * @param input Full user command string e.g., "view 2019-12-02"
+     * @return Parsed LocalDate object.
+     * @throws PeterException If input format is invalid or empty.
+     */
+    public static LocalDate parseViewDate(String input) throws PeterException {
+        String[] parts = input.trim().split("\\s+", 2);
+        if (parts.length < 2 || parts[1].trim().isEmpty()) {
+            throw new PeterException("OOPS!!! Please specify a date in yyyy-MM-dd format (e.g., view 2019-12-02).");
+        }
+        try {
+            return LocalDate.parse(parts[1].trim());
+        } catch (DateTimeParseException e) {
+            throw new PeterException("OOPS!!! Invalid date format. Please use yyyy-MM-dd (e.g., 2019-12-02).");
         }
     }
 }
