@@ -110,7 +110,6 @@ public class Storage {
         default:
             throw new PeterException("Unknown task type");
         }
-
         if (isDone) {
             task.markAsDone();
         }
