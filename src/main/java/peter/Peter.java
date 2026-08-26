@@ -1,3 +1,15 @@
+package peter;
+
+import peter.command.Command;
+import peter.exception.PeterException;
+import peter.parser.Parser;
+import peter.storage.Storage;
+import peter.task.Task;
+import peter.task.TaskList;
+import peter.ui.Ui;
+
+
+
 public class Peter {
     private final Storage storage;
     private TaskList tasks;

@@ -1,3 +1,5 @@
+package peter.command;
+
 public enum Command {
     BYE,
     LIST,
