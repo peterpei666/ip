@@ -15,9 +15,12 @@ import peter.ui.Ui;
  * The main class of the chatbot.
  */
 public class Peter {
+    private static final String WELCOME_MESSAGE = "Hello! I'm Peter.\nWhat can I do for you?";
+
     private final Storage storage;
     private TaskList tasks;
     private final Ui ui;
+    private boolean hasLoadingError;
 
     /**
      * Constructs a chatbot.
@@ -30,7 +33,7 @@ public class Peter {
         try {
             tasks = new TaskList(storage.load());
         } catch (PeterException e) {
-            ui.showLoadingError();
+            hasLoadingError = true;
             tasks = new TaskList();
         }
     }
@@ -39,6 +42,9 @@ public class Peter {
      * Runs the chatbot's command loop.
      */
     public void run() {
+        if (hasLoadingError) {
+            ui.showLoadingError();
+        }
         ui.showWelcome();
         boolean isExit = false;
 
@@ -49,106 +55,104 @@ public class Peter {
             }
 
             ui.showLine();
-            try {
-                Command command = Command.fromString(fullCommand);
-                switch (command) {
-                    case BYE:
-                        ui.showMessage("Bye. Hope to see you again soon!");
-                        isExit = true;
-                        break;
-                    case LIST:
-                        handleList();
-                        break;
-                    case MARK:
-                        handleMark(fullCommand);
-                        break;
-                    case UNMARK:
-                        handleUnmark(fullCommand);
-                        break;
-                    case TODO:
-                        handleTodo(fullCommand);
-                        break;
-                    case DEADLINE:
-                        handleDeadline(fullCommand);
-                        break;
-                    case EVENT:
-                        handleEvent(fullCommand);
-                        break;
-                    case DELETE:
-                        handleDelete(fullCommand);
-                        break;
-                    case VIEW:
-                        handleView(fullCommand);
-                        break;
-                    case FIND:
-                        handleFind(fullCommand);
-                        break;
-                    default:
-                        throw new PeterException("OOPS!!! I'm sorry, but I don't know what that means :-(");
-                }
-            } catch (PeterException e) {
-                ui.showError(e.getMessage());
-            }
+            ui.showMessage(getResponse(fullCommand));
+            isExit = Command.fromString(fullCommand) == Command.BYE;
             ui.showLine();
         }
         ui.close();
     }
 
-    private void handleList() {
-        if (tasks.isEmpty()) {
-            ui.showMessage("Your task list is currently empty!");
-        } else {
-            ui.showMessage("Here are the tasks in your list:");
-            for (int i = 0; i < tasks.size(); i++) {
-                ui.showMessage((i + 1) + "." + tasks.get(i));
-            }
+    /**
+     * Generates Peter's response to one command for use by both the GUI and text UI.
+     *
+     * @param fullCommand Raw command entered by the user.
+     * @return Peter's response text.
+     */
+    public String getResponse(String fullCommand) {
+        try {
+            Command command = Command.fromString(fullCommand);
+            return switch (command) {
+                case BYE -> "Bye. Hope to see you again soon!";
+                case LIST -> handleList();
+                case MARK -> handleMark(fullCommand);
+                case UNMARK -> handleUnmark(fullCommand);
+                case TODO -> handleTodo(fullCommand);
+                case DEADLINE -> handleDeadline(fullCommand);
+                case EVENT -> handleEvent(fullCommand);
+                case DELETE -> handleDelete(fullCommand);
+                case VIEW -> handleView(fullCommand);
+                case FIND -> handleFind(fullCommand);
+                default -> throw new PeterException("OOPS!!! I'm sorry, but I don't know what that means :-(");
+            };
+        } catch (PeterException e) {
+            return e.getMessage();
         }
     }
 
-    private void handleMark(String input) throws PeterException {
+    /**
+     * Returns the greeting shown when the GUI starts.
+     *
+     * @return Peter's welcome message, including a loading warning when needed.
+     */
+    public String getWelcomeMessage() {
+        if (hasLoadingError) {
+            return "[Warning] Failed to load data from storage. Starting with empty list.\n" + WELCOME_MESSAGE;
+        }
+        return WELCOME_MESSAGE;
+    }
+
+    private String handleList() {
+        if (tasks.isEmpty()) {
+            return "Your task list is currently empty!";
+        }
+        StringBuilder response = new StringBuilder("Here are the tasks in your list:");
+        for (int i = 0; i < tasks.size(); i++) {
+            response.append(System.lineSeparator()).append(i + 1).append('.').append(tasks.get(i));
+        }
+        return response.toString();
+    }
+
+    private String handleMark(String input) throws PeterException {
         int index = Parser.parseIndex(input);
         Task task = tasks.mark(index);
         storage.save(tasks);
-        ui.showMessage("Nice! I've marked this task as done:");
-        ui.showMessage("  " + task);
+        return "Nice! I've marked this task as done:\n  " + task;
     }
 
-    private void handleUnmark(String input) throws PeterException {
+    private String handleUnmark(String input) throws PeterException {
         int index = Parser.parseIndex(input);
         Task task = tasks.unmark(index);
         storage.save(tasks);
-        ui.showMessage("OK, I've marked this task as not done yet:");
-        ui.showMessage("  " + task);
+        return "OK, I've marked this task as not done yet:\n  " + task;
     }
 
-    private void handleTodo(String input) throws PeterException {
+    private String handleTodo(String input) throws PeterException {
         Task task = Parser.parseTodo(input);
         tasks.add(task);
         storage.save(tasks);
-        printTaskAdded(task);
+        return getTaskAddedMessage(task);
     }
 
-    private void handleDeadline(String input) throws PeterException {
+    private String handleDeadline(String input) throws PeterException {
         Task task = Parser.parseDeadline(input);
         tasks.add(task);
         storage.save(tasks);
-        printTaskAdded(task);
+        return getTaskAddedMessage(task);
     }
 
-    private void handleEvent(String input) throws PeterException {
+    private String handleEvent(String input) throws PeterException {
         Task task = Parser.parseEvent(input);
         tasks.add(task);
         storage.save(tasks);
-        printTaskAdded(task);
+        return getTaskAddedMessage(task);
     }
 
-    private void handleDelete(String input) throws PeterException {
+    private String handleDelete(String input) throws PeterException {
         int index = Parser.parseIndex(input);
         Task removedTask = tasks.delete(index);
         storage.save(tasks);
-        ui.showMessage("Noted. I've removed this task:");
-        ui.showMessage("  " + removedTask);
-        ui.showMessage("Now you have " + tasks.size() + " tasks in the list.");
+        return "Noted. I've removed this task:\n  " + removedTask
+                + "\nNow you have " + tasks.size() + " tasks in the list.";
     }
 
     /**
@@ -157,16 +161,16 @@ public class Peter {
      * @param fullCommand Raw command input string.
      * @throws PeterException If keyword is missing.
      */
-    private void handleFind(String fullCommand) throws PeterException {
+    private String handleFind(String fullCommand) throws PeterException {
         String keyword = Parser.parseFindKeyword(fullCommand);
         List<Task> matchingTasks = tasks.findTasks(keyword);
-        ui.showFoundTasks(matchingTasks);
+        return formatTasks(matchingTasks, "No matching tasks found in your list!",
+                "Here are the matching tasks in your list:");
     }
 
-    private void printTaskAdded(Task task) {
-        ui.showMessage("Got it. I've added this task:");
-        ui.showMessage("  " + task);
-        ui.showMessage("Now you have " + tasks.size() + " tasks in the list.");
+    private String getTaskAddedMessage(Task task) {
+        return "Got it. I've added this task:\n  " + task
+                + "\nNow you have " + tasks.size() + " tasks in the list.";
     }
 
     /**
@@ -175,10 +179,22 @@ public class Peter {
      * @param fullCommand Raw command string entered by the user (e.g., "view 2019-12-02").
      * @throws PeterException If the date format is invalid or parameter is missing.
      */
-    private void handleView(String fullCommand) throws PeterException {
+    private String handleView(String fullCommand) throws PeterException {
         LocalDate date = Parser.parseViewDate(fullCommand);
         List<Task> matchingTasks = tasks.getTasksOnDate(date);
-        ui.showTasksOnDate(matchingTasks);
+        return formatTasks(matchingTasks, "No tasks found on this date!",
+                "Here are the tasks on this date:");
+    }
+
+    private String formatTasks(List<Task> matchingTasks, String emptyMessage, String heading) {
+        if (matchingTasks.isEmpty()) {
+            return emptyMessage;
+        }
+        StringBuilder response = new StringBuilder(heading);
+        for (int i = 0; i < matchingTasks.size(); i++) {
+            response.append(System.lineSeparator()).append(i + 1).append('.').append(matchingTasks.get(i));
+        }
+        return response.toString();
     }
 
     public static void main(String[] args) {
