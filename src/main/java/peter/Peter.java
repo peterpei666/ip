@@ -11,13 +11,19 @@ import peter.task.Task;
 import peter.task.TaskList;
 import peter.ui.Ui;
 
-
-
+/**
+ * The main class of the chatbot.
+ */
 public class Peter {
     private final Storage storage;
     private TaskList tasks;
     private final Ui ui;
 
+    /**
+     * Constructs a chatbot.
+     *
+     * @param filePath The path to the storage file.
+     */
     public Peter(String filePath) {
         ui = new Ui();
         storage = new Storage(filePath);
@@ -29,6 +35,9 @@ public class Peter {
         }
     }
 
+    /**
+     * Runs the chatbot's command loop.
+     */
     public void run() {
         ui.showWelcome();
         boolean isExit = false;
@@ -68,7 +77,7 @@ public class Peter {
                     case DELETE:
                         handleDelete(fullCommand);
                         break;
-                    case VIEW: 
+                    case VIEW:
                         handleView(fullCommand);
                         break;
                     case FIND:

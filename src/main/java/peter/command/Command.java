@@ -1,5 +1,8 @@
 package peter.command;
 
+/**
+ * Lists the commands supported by the chatbot.
+ */
 public enum Command {
     BYE,
     LIST,

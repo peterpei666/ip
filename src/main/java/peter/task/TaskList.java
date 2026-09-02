@@ -3,8 +3,12 @@ package peter.task;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+
 import peter.exception.PeterException;
 
+/**
+ * Manages the collection of tasks and operations performed on it.
+ */
 public class TaskList {
     private final List<Task> tasks;
 
@@ -32,6 +36,13 @@ public class TaskList {
         tasks.add(task);
     }
 
+    /**
+     * Removes the task at the specified zero-based index.
+     *
+     * @param index Zero-based index of the task to remove.
+     * @return The removed task.
+     * @throws PeterException If the index is outside the task list.
+     */
     public Task delete(int index) throws PeterException {
         if (index < 0 || index >= tasks.size()) {
             throw new PeterException("OOPS!!! Task number " + (index + 1) + " does not exist.");
@@ -39,6 +50,13 @@ public class TaskList {
         return tasks.remove(index);
     }
 
+    /**
+     * Marks the task at the specified zero-based index as completed.
+     *
+     * @param index Zero-based index of the task to mark.
+     * @return The task that was marked.
+     * @throws PeterException If the index is outside the task list.
+     */
     public Task mark(int index) throws PeterException {
         if (index < 0 || index >= tasks.size()) {
             throw new PeterException("OOPS!!! Task number " + (index + 1) + " does not exist.");
@@ -48,6 +66,13 @@ public class TaskList {
         return task;
     }
 
+    /**
+     * Marks the task at the specified zero-based index as incomplete.
+     *
+     * @param index Zero-based index of the task to unmark.
+     * @return The task that was unmarked.
+     * @throws PeterException If the index is outside the task list.
+     */
     public Task unmark(int index) throws PeterException {
         if (index < 0 || index >= tasks.size()) {
             throw new PeterException("OOPS!!! Task number " + (index + 1) + " does not exist.");

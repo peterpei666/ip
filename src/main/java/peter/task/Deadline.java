@@ -3,6 +3,7 @@ package peter.task;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+
 import peter.exception.PeterException;
 
 /**
@@ -10,12 +11,12 @@ import peter.exception.PeterException;
  * A deadline has a time besides the basic information of Task.
  */
 public class Deadline extends Task {
-    protected LocalDateTime by;
-
     private static final DateTimeFormatter INPUT_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HHmm");
     private static final DateTimeFormatter INPUT_DATE_ONLY_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private static final DateTimeFormatter OUTPUT_FORMATTER = DateTimeFormatter.ofPattern("MMM dd yyyy, h:mm a");
     private static final DateTimeFormatter FILE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HHmm");
+
+    protected LocalDateTime by;
 
     /**
      * Constructs a Deadline object with the specified description.
@@ -41,7 +42,8 @@ public class Deadline extends Task {
                 return java.time.LocalDate.parse(byStr, INPUT_DATE_ONLY_FORMATTER).atTime(23, 59);
             }
         } catch (DateTimeParseException e) {
-            throw new PeterException("OOPS!!! Please enter date time in format: yyyy-MM-dd HHmm (e.g., 2019-12-02 1800)");
+            throw new PeterException(
+                    "OOPS!!! Please enter date time in format: yyyy-MM-dd HHmm (e.g., 2019-12-02 1800)");
         }
     }
 
