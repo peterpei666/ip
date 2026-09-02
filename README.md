@@ -2,7 +2,7 @@
 
 > “Your mind is for having ideas, not holding them.” — David Allen ([source](https://gettingthingsdone.com/))
 
-Peter is a **text-based task manager** that helps you keep track of todos, deadlines, and events from the command line. It is designed to be *simple*, ~~complicated~~ easy to learn, and quick to use. 🚀
+Peter is a task manager with both a JavaFX GUI and a text-based interface. It helps you keep track of todos, deadlines, and events while remaining *simple*, ~~complicated~~ easy to learn, and quick to use. 🚀
 
 ## Features
 
@@ -19,7 +19,7 @@ Peter requires **JDK 25**. To run it from a terminal:
 1. Clone this repository.
 2. Open the project directory in VS Code or a terminal.
 3. Make sure Java 25 is active.
-4. Run `./gradlew run`.
+4. Run `./gradlew run` for the GUI, or `./gradlew runText` for the text-based UI.
 5. Enter a command such as `todo read book`.
 
 You can learn more about Markdown used in this document from the [GitHub Flavored Markdown guide](https://guides.github.com/features/mastering-markdown/).
@@ -44,7 +44,7 @@ bye
 - [x] Manage events
 - [x] Save and load tasks
 - [x] Search tasks by keyword
-- [ ] Add a graphical user interface
+- [x] Add a graphical user interface
 
 ## Java entry point
 

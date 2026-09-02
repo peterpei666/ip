@@ -87,8 +87,15 @@ public class Ui {
         return "";
     }
 
+    /**
+     * Prints a response while preserving indentation for each line.
+     *
+     * @param message Response to print.
+     */
     public void showMessage(String message) {
-        System.out.println("     " + message);
+        for (String line : message.split("\\R", -1)) {
+            System.out.println("     " + line);
+        }
     }
 
     public void close() {
