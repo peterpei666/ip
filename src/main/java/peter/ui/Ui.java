@@ -2,8 +2,12 @@ package peter.ui;
 
 import java.util.List;
 import java.util.Scanner;
+
 import peter.task.Task;
 
+/**
+ * Handle all UI issues.
+ */
 public class Ui {
     private static final String LINE = "    ____________________________________________________________";
     private static final String LOGO = "____________________________________________________________\n"
@@ -19,6 +23,9 @@ public class Ui {
         this.scanner = new Scanner(System.in);
     }
 
+    /**
+     * Show welcome to user.
+     */
     public void showWelcome() {
         System.out.println(LOGO);
         System.out.println(" Hello! I'm Peter.");
@@ -70,6 +77,9 @@ public class Ui {
         }
     }
 
+    /**
+     * Read one command from user.
+     */
     public String readCommand() {
         if (scanner.hasNextLine()) {
             return scanner.nextLine().trim();

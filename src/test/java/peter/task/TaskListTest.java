@@ -1,10 +1,11 @@
 package peter.task;
 
-import org.junit.jupiter.api.Test;
-import peter.exception.PeterException;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import org.junit.jupiter.api.Test;
+
+import peter.exception.PeterException;
 
 public class TaskListTest {
 

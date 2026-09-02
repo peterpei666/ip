@@ -2,6 +2,7 @@ package peter.parser;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+
 import peter.exception.PeterException;
 import peter.task.Deadline;
 import peter.task.Event;
@@ -38,11 +39,11 @@ public class Parser {
     public static Task parseDeadline(String input) throws PeterException {
         String body = input.substring(8).trim();
         String[] parts = body.split(" /by ", 2);
-        
+
         if (parts.length < 2 || parts[0].trim().isEmpty() || parts[1].trim().isEmpty()) {
             throw new PeterException("OOPS!!! The description and date of a deadline cannot be empty.");
         }
-        
+
         return new Deadline(parts[0].trim(), parts[1].trim());
     }
 

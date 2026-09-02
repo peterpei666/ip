@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+
 import peter.exception.PeterException;
 import peter.task.Deadline;
 import peter.task.Event;
@@ -18,7 +19,7 @@ import peter.task.Todo;
  */
 public class Storage {
     private final String filePath;
-    
+
     /**
      * Constructs a Storage object with a target file path.
      *
@@ -53,7 +54,8 @@ public class Storage {
                     if (task != null) {
                         tasks.add(task);
                     }
-                } catch (Exception e) {
+                } catch (PeterException e) {
+                    // Skip corrupted entries so that other valid tasks can still be loaded.
                 }
             }
         } catch (IOException e) {
@@ -96,19 +98,23 @@ public class Storage {
 
         Task task;
         switch (type) {
-        case "T":
-            task = new Todo(description);
-            break;
-        case "D":
-            if (parts.length < 4) throw new PeterException("Corrupted deadline format");
-            task = new Deadline(description, parts[3].trim());
-            break;
-        case "E":
-            if (parts.length < 5) throw new PeterException("Corrupted event format");
-            task = new Event(description, parts[3].trim(), parts[4].trim());
-            break;
-        default:
-            throw new PeterException("Unknown task type");
+            case "T":
+                task = new Todo(description);
+                break;
+            case "D":
+                if (parts.length < 4) {
+                    throw new PeterException("Corrupted deadline format");
+                }
+                task = new Deadline(description, parts[3].trim());
+                break;
+            case "E":
+                if (parts.length < 5) {
+                    throw new PeterException("Corrupted event format");
+                }
+                task = new Event(description, parts[3].trim(), parts[4].trim());
+                break;
+            default:
+                throw new PeterException("Unknown task type");
         }
         if (isDone) {
             task.markAsDone();

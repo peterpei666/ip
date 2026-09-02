@@ -1,14 +1,17 @@
 package peter.parser;
 
-import org.junit.jupiter.api.Test;
-import peter.exception.PeterException;
-import peter.task.Task;
-import peter.task.Todo;
-import peter.task.Deadline;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.Test;
+
+import peter.exception.PeterException;
+import peter.task.Deadline;
+import peter.task.Task;
+import peter.task.Todo;
+
 
 public class ParserTest {
 
