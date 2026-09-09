@@ -3,6 +3,9 @@ package peter.task;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.time.LocalDate;
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
 
 import peter.exception.PeterException;
@@ -42,5 +45,24 @@ public class TaskListTest {
 
         Task marked = tasks.mark(0);
         assertEquals("[T][X] read book", marked.toString());
+    }
+
+    @Test
+    public void findTasks_matchingKeyword_returnsMatchingTasksIgnoringCase() {
+        Task matchingTask = new Todo("Read Book");
+        TaskList tasks = new TaskList(List.of(matchingTask, new Todo("buy groceries")));
+
+        assertEquals(List.of(matchingTask), tasks.findTasks("book"));
+    }
+
+    @Test
+    public void getTasksOnDate_matchingDeadline_returnsMatchingDeadlines() throws PeterException {
+        Task matchingDeadline = new Deadline("return book", "2019-12-02 1800");
+        TaskList tasks = new TaskList(List.of(
+                matchingDeadline,
+                new Deadline("submit report", "2019-12-03 1800"),
+                new Todo("plan December 2 activities")));
+
+        assertEquals(List.of(matchingDeadline), tasks.getTasksOnDate(LocalDate.of(2019, 12, 2)));
     }
 }
