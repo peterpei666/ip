@@ -3,6 +3,7 @@ package peter.task;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import peter.exception.PeterException;
 
@@ -117,16 +118,10 @@ public class TaskList {
      * @return List of matching tasks on that date.
      */
     public List<Task> getTasksOnDate(LocalDate date) {
-        List<Task> matchingTasks = new ArrayList<>();
-        for (Task task : tasks) {
-            if (task instanceof Deadline) {
-                Deadline deadline = (Deadline) task;
-                if (deadline.getBy().toLocalDate().equals(date)) {
-                    matchingTasks.add(deadline);
-                }
-            }
-        }
-        return matchingTasks;
+        return tasks.stream()
+                .filter(task -> task instanceof Deadline deadline
+                        && deadline.getBy().toLocalDate().equals(date))
+                .toList();
     }
 
     /**
@@ -136,12 +131,9 @@ public class TaskList {
      * @return A list of matching tasks.
      */
     public List<Task> findTasks(String keyword) {
-        List<Task> matchingTasks = new ArrayList<>();
-        for (Task task : tasks) {
-            if (task.getDescription().toLowerCase().contains(keyword.toLowerCase())) {
-                matchingTasks.add(task);
-            }
-        }
-        return matchingTasks;
+        String normalizedKeyword = keyword.toLowerCase(Locale.ROOT);
+        return tasks.stream()
+                .filter(task -> task.getDescription().toLowerCase(Locale.ROOT).contains(normalizedKeyword))
+                .toList();
     }
 }
