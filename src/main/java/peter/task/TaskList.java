@@ -12,17 +12,25 @@ import peter.exception.PeterException;
 public class TaskList {
     private final List<Task> tasks;
 
+    /**
+     * Constructs an empty task list.
+     */
     public TaskList() {
         this.tasks = new ArrayList<>();
     }
 
+    /**
+     * Constructs a task list containing the supplied tasks.
+     *
+     * @param tasks Initial tasks to copy into this task list.
+     */
     public TaskList(List<Task> tasks) {
         assert tasks != null : "Task list must not be null";
-        this.tasks = tasks;
+        this.tasks = new ArrayList<>(tasks);
     }
 
     public List<Task> getTasks() {
-        return tasks;
+        return List.copyOf(tasks);
     }
 
     public int size() {
@@ -33,6 +41,11 @@ public class TaskList {
         return tasks.isEmpty();
     }
 
+    /**
+     * Adds a task to the end of the list.
+     *
+     * @param task Task to add.
+     */
     public void add(Task task) {
         assert task != null : "Cannot add a null task";
         tasks.add(task);
@@ -46,9 +59,7 @@ public class TaskList {
      * @throws PeterException If the index is outside the task list.
      */
     public Task delete(int index) throws PeterException {
-        if (index < 0 || index >= tasks.size()) {
-            throw new PeterException("OOPS!!! Task number " + (index + 1) + " does not exist.");
-        }
+        validateIndex(index);
         assert index >= 0 && index < tasks.size() : "Task index should have been validated";
         return tasks.remove(index);
     }
@@ -61,9 +72,7 @@ public class TaskList {
      * @throws PeterException If the index is outside the task list.
      */
     public Task mark(int index) throws PeterException {
-        if (index < 0 || index >= tasks.size()) {
-            throw new PeterException("OOPS!!! Task number " + (index + 1) + " does not exist.");
-        }
+        validateIndex(index);
         assert index >= 0 && index < tasks.size() : "Task index should have been validated";
         Task task = tasks.get(index);
         task.markAsDone();
@@ -78,13 +87,23 @@ public class TaskList {
      * @throws PeterException If the index is outside the task list.
      */
     public Task unmark(int index) throws PeterException {
-        if (index < 0 || index >= tasks.size()) {
-            throw new PeterException("OOPS!!! Task number " + (index + 1) + " does not exist.");
-        }
+        validateIndex(index);
         assert index >= 0 && index < tasks.size() : "Task index should have been validated";
         Task task = tasks.get(index);
         task.markAsUndone();
         return task;
+    }
+
+    /**
+     * Checks that an index identifies an existing task.
+     *
+     * @param index Zero-based task index to check.
+     * @throws PeterException If the index is outside the task list.
+     */
+    private void validateIndex(int index) throws PeterException {
+        if (index < 0 || index >= tasks.size()) {
+            throw new PeterException("OOPS!!! Task number " + (index + 1) + " does not exist.");
+        }
     }
 
     public Task get(int index) {

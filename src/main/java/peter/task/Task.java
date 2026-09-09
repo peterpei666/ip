@@ -5,8 +5,8 @@ package peter.task;
  * A task has a description and a status indicating whether it is completed.
  */
 public class Task {
-    protected String description;
-    protected boolean isDone;
+    private final String description;
+    private boolean isDone;
 
     /**
      * Constructs a Task object with the specified description.
