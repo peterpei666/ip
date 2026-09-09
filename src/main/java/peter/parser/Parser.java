@@ -26,6 +26,7 @@ public class Parser {
         if (description.isEmpty()) {
             throw new PeterException("OOPS!!! The description of a todo cannot be empty.");
         }
+        assert !description.isBlank() : "Todo description should have been validated";
         return new Todo(description);
     }
 
@@ -44,6 +45,8 @@ public class Parser {
             throw new PeterException("OOPS!!! The description and date of a deadline cannot be empty.");
         }
 
+        assert !parts[0].isBlank() : "Deadline description should have been validated";
+        assert !parts[1].isBlank() : "Deadline date should have been validated";
         return new Deadline(parts[0].trim(), parts[1].trim());
     }
 
@@ -67,6 +70,9 @@ public class Parser {
         if (timeParts.length < 2 || timeParts[0].trim().isEmpty() || timeParts[1].trim().isEmpty()) {
             throw new PeterException("OOPS!!! Please specify both /from and /to time ranges.");
         }
+        assert !parts[0].isBlank() : "Event description should have been validated";
+        assert !timeParts[0].isBlank() : "Event start time should have been validated";
+        assert !timeParts[1].isBlank() : "Event end time should have been validated";
         return new Event(parts[0].trim(), timeParts[0].trim(), timeParts[1].trim());
     }
 

@@ -17,6 +17,7 @@ public class TaskList {
     }
 
     public TaskList(List<Task> tasks) {
+        assert tasks != null : "Task list must not be null";
         this.tasks = tasks;
     }
 
@@ -33,6 +34,7 @@ public class TaskList {
     }
 
     public void add(Task task) {
+        assert task != null : "Cannot add a null task";
         tasks.add(task);
     }
 
@@ -47,6 +49,7 @@ public class TaskList {
         if (index < 0 || index >= tasks.size()) {
             throw new PeterException("OOPS!!! Task number " + (index + 1) + " does not exist.");
         }
+        assert index >= 0 && index < tasks.size() : "Task index should have been validated";
         return tasks.remove(index);
     }
 
@@ -61,6 +64,7 @@ public class TaskList {
         if (index < 0 || index >= tasks.size()) {
             throw new PeterException("OOPS!!! Task number " + (index + 1) + " does not exist.");
         }
+        assert index >= 0 && index < tasks.size() : "Task index should have been validated";
         Task task = tasks.get(index);
         task.markAsDone();
         return task;
@@ -77,6 +81,7 @@ public class TaskList {
         if (index < 0 || index >= tasks.size()) {
             throw new PeterException("OOPS!!! Task number " + (index + 1) + " does not exist.");
         }
+        assert index >= 0 && index < tasks.size() : "Task index should have been validated";
         Task task = tasks.get(index);
         task.markAsUndone();
         return task;
