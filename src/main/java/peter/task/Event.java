@@ -2,19 +2,19 @@ package peter.task;
 
 /**
  * Represents an Event type of Task.
- * A deadline has two time fields for the begining and end besides the basic information of Task.
+ * An event has start and end times in addition to the basic task information.
  */
 public class Event extends Task {
-    protected String from;
-    protected String to;
+    private final String from;
+    private final String to;
 
     /**
-     * Constructs a Deadline object with the specified description.
+     * Constructs an Event object with the specified description and times.
      * The task is initially not completed.
      *
      * @param description The textual description of the task.
-     * @param from The time of the begining of an event.
-     * @param by The time of the end of an event.
+     * @param from The start time of the event.
+     * @param to The end time of the event.
      */
     public Event(String description, String from, String to) {
         super(description);

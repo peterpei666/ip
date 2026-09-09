@@ -32,9 +32,9 @@ public class ParserTest {
 
     @Test
     public void parseDeadline_validInput_success() throws PeterException {
-        Task task = Parser.parseDeadline("deadline return book /by Sunday");
+        Task task = Parser.parseDeadline("deadline return book /by 2019-12-02 1800");
         assertTrue(task instanceof Deadline);
-        assertEquals("[D][ ] return book (by: Sunday)", task.toString());
+        assertEquals("[D][ ] return book (by: Dec 02 2019, 6:00 PM)", task.toString());
     }
 
     @Test
