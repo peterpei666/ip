@@ -1,7 +1,9 @@
 package peter.task;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
@@ -135,5 +137,23 @@ public class TaskList {
         return tasks.stream()
                 .filter(task -> task.getDescription().toLowerCase(Locale.ROOT).contains(normalizedKeyword))
                 .toList();
+    }
+
+    /**
+     * Sorts deadlines from earliest to latest, followed by tasks without a deadline.
+     * The relative order of tasks without deadlines is preserved.
+     */
+    public void sortByDeadline() {
+        tasks.sort(Comparator.comparing(TaskList::getDeadlineTime));
+    }
+
+    /**
+     * Returns a task's deadline, or the latest possible time for tasks without one.
+     */
+    private static LocalDateTime getDeadlineTime(Task task) {
+        if (task instanceof Deadline deadline) {
+            return deadline.getBy();
+        }
+        return LocalDateTime.MAX;
     }
 }

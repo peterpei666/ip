@@ -82,6 +82,7 @@ public class Peter {
                 case DELETE -> handleDelete(fullCommand);
                 case VIEW -> handleView(fullCommand);
                 case FIND -> handleFind(fullCommand);
+                case SORT -> handleSort();
                 default -> throw new PeterException("OOPS!!! I'm sorry, but I don't know what that means :-(");
             };
         } catch (PeterException e) {
@@ -184,6 +185,18 @@ public class Peter {
         List<Task> matchingTasks = tasks.getTasksOnDate(date);
         return formatTasks(matchingTasks, "No tasks found on this date!",
                 "Here are the tasks on this date:");
+    }
+
+    /**
+     * Sorts deadlines chronologically and persists the reordered task list.
+     *
+     * @return A message containing the sorted task list.
+     */
+    private String handleSort() {
+        tasks.sortByDeadline();
+        storage.save(tasks);
+        return formatTasks(tasks.getTasks(), "Your task list is currently empty!",
+                "I've sorted your deadlines chronologically:");
     }
 
     private String formatTasks(List<Task> matchingTasks, String emptyMessage, String heading) {

@@ -10,6 +10,7 @@ Peter is a task manager with both a JavaFX GUI and a text-based interface. It he
 - List, mark, unmark, and delete tasks
 - Find tasks using a keyword
 - View deadlines on a selected date
+- Sort deadlines chronologically
 - Save tasks automatically and restore them the next time Peter starts
 
 ## Getting started
@@ -34,6 +35,7 @@ list
 mark 1
 find book
 view 2026-09-10
+sort
 bye
 ```
 
@@ -44,6 +46,7 @@ bye
 - [x] Manage events
 - [x] Save and load tasks
 - [x] Search tasks by keyword
+- [x] Sort deadlines chronologically
 - [x] Add a graphical user interface
 
 ## Java entry point

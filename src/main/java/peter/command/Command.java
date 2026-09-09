@@ -14,6 +14,7 @@ public enum Command {
     DELETE,
     VIEW,
     FIND,
+    SORT,
     UNKNOWN;
 
     /**

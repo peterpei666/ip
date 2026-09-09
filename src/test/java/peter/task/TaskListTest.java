@@ -65,4 +65,17 @@ public class TaskListTest {
 
         assertEquals(List.of(matchingDeadline), tasks.getTasksOnDate(LocalDate.of(2019, 12, 2)));
     }
+
+    @Test
+    public void sortByDeadline_mixedTasks_deadlinesSortedBeforeOtherTasks() throws PeterException {
+        Task laterDeadline = new Deadline("submit report", "2019-12-03 1800");
+        Task firstTodo = new Todo("buy groceries");
+        Task earlierDeadline = new Deadline("return book", "2019-12-02 1800");
+        Task secondTodo = new Todo("read notes");
+        TaskList tasks = new TaskList(List.of(laterDeadline, firstTodo, earlierDeadline, secondTodo));
+
+        tasks.sortByDeadline();
+
+        assertEquals(List.of(earlierDeadline, laterDeadline, firstTodo, secondTodo), tasks.getTasks());
+    }
 }
