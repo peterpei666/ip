@@ -4,6 +4,8 @@
 
 Peter is a calm task navigator with both a JavaFX GUI and a text-based interface. It helps you chart todos, deadlines, and events while keeping every response clear, encouraging, and quick to scan. 🧭
 
+Read the [Peter User Guide](https://peterpei666.github.io/ip/) for command examples and usage instructions.
+
 ## Features
 
 - Add todos, deadlines, and events

@@ -24,17 +24,20 @@ dependencies {
     String javaFxVersion = '17.0.7'
     String osName = System.getProperty('os.name').toLowerCase()
     String architecture = System.getProperty('os.arch').toLowerCase()
-    String javaFxPlatform
+    String localJavaFxPlatform
     if (osName.contains('mac')) {
-        javaFxPlatform = architecture.contains('aarch64') ? 'mac-aarch64' : 'mac'
+        localJavaFxPlatform = architecture.contains('aarch64') ? 'mac-aarch64' : 'mac'
     } else if (osName.contains('win')) {
-        javaFxPlatform = architecture.contains('aarch64') ? 'win-aarch64' : 'win'
+        localJavaFxPlatform = 'win'
     } else {
-        javaFxPlatform = architecture.contains('aarch64') ? 'linux-aarch64' : 'linux'
+        localJavaFxPlatform = architecture.contains('aarch64') ? 'linux-aarch64' : 'linux'
     }
+    List<String> javaFxPlatforms = ['win', 'linux', localJavaFxPlatform].unique()
 
     ['base', 'controls', 'fxml', 'graphics'].each { module ->
-        implementation("org.openjfx:javafx-${module}:${javaFxVersion}:${javaFxPlatform}")
+        javaFxPlatforms.each { platform ->
+            implementation("org.openjfx:javafx-${module}:${javaFxVersion}:${platform}")
+        }
     }
 
     testImplementation "org.junit.jupiter:junit-jupiter-api:${jUnitVersion}"
