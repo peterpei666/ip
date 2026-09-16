@@ -45,9 +45,6 @@ public class Parser {
 
         String description = normalizeDescription(parts[0], "A deadline needs a task before /by.");
         String dateTime = normalizeWhitespace(parts[1]);
-        if (dateTime.isEmpty()) {
-            throw new PeterException("A deadline needs an arrival time after /by.");
-        }
         rejectStorageDelimiter(dateTime);
         return new Deadline(description, dateTime);
     }
@@ -76,9 +73,6 @@ public class Parser {
                 "That event needs a description before /from.");
         String from = normalizeWhitespace(toParts[0]);
         String to = normalizeWhitespace(toParts[1]);
-        if (from.isEmpty() || to.isEmpty()) {
-            throw new PeterException("Please chart both the /from and /to times for that event.");
-        }
         rejectStorageDelimiter(from);
         rejectStorageDelimiter(to);
         return new Event(description, from, to);
@@ -196,6 +190,9 @@ public class Parser {
     private static void rejectStorageDelimiter(String value) throws PeterException {
         if (value.contains(STORAGE_DELIMITER)) {
             throw new PeterException("The | character is reserved for Peter's log. Please leave it out.");
+        }
+        if (value.chars().anyMatch(Character::isISOControl)) {
+            throw new PeterException("That text contains an unsupported control character.");
         }
     }
 }

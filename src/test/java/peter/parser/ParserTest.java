@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.time.LocalDate;
+
 import org.junit.jupiter.api.Test;
 
 import peter.exception.PeterException;
@@ -130,5 +132,97 @@ public class ParserTest {
         assertThrows(PeterException.class, () -> {
             Parser.requireNoArguments("list now", "list");
         });
+    }
+
+    @Test
+    public void parseTodo_internalWhitespace_normalized() throws PeterException {
+        Task task = Parser.parseTodo("  TODO   read\t\tbook   carefully  ");
+
+        assertEquals("read book carefully", task.getDescription());
+    }
+
+    @Test
+    public void parseTodo_nullOrWrongCommand_exceptionThrown() {
+        assertThrows(PeterException.class, () -> Parser.parseTodo(null));
+        assertThrows(PeterException.class, () -> Parser.parseTodo("deadline read book"));
+    }
+
+    @Test
+    public void parseTodo_unicodeDescription_preserved() throws PeterException {
+        Task task = Parser.parseTodo("todo 完成报告 🧭");
+
+        assertEquals("完成报告 🧭", task.getDescription());
+    }
+
+    @Test
+    public void parseTodo_embeddedControlCharacter_exceptionThrown() {
+        assertThrows(PeterException.class, () -> Parser.parseTodo("todo read\0book"));
+    }
+
+    @Test
+    public void parseDeadline_missingDescriptionOrDate_exceptionThrown() {
+        assertThrows(PeterException.class, () -> Parser.parseDeadline("deadline /by 2026-09-10"));
+        assertThrows(PeterException.class, () -> Parser.parseDeadline("deadline read book /by"));
+        assertThrows(PeterException.class, () -> Parser.parseDeadline("deadline read book/by 2026-09-10"));
+    }
+
+    @Test
+    public void parseDeadline_dateOnly_success() throws PeterException {
+        Deadline deadline = (Deadline) Parser.parseDeadline("DEADLINE submit /BY 2026-09-10");
+
+        assertEquals(LocalDate.of(2026, 9, 10), deadline.getBy().toLocalDate());
+    }
+
+    @Test
+    public void parseEvent_missingOrDuplicateMarkers_exceptionThrown() {
+        String duplicateFrom = "event meeting /from 0900 /from 1000 /to 1100";
+        String duplicateTo = "event meeting /from 0900 /to 1000 /to 1100";
+        assertThrows(PeterException.class, () -> Parser.parseEvent("event meeting /to 1600"));
+        assertThrows(PeterException.class, () -> Parser.parseEvent("event meeting /from 0900"));
+        assertThrows(PeterException.class, () -> Parser.parseEvent(duplicateFrom));
+        assertThrows(PeterException.class, () -> Parser.parseEvent(duplicateTo));
+    }
+
+    @Test
+    public void parseEvent_missingDescriptionOrTime_exceptionThrown() {
+        assertThrows(PeterException.class, () -> Parser.parseEvent("event /from 0900 /to 1000"));
+        assertThrows(PeterException.class, () -> Parser.parseEvent("event meeting /from /to 1000"));
+        assertThrows(PeterException.class, () -> Parser.parseEvent("event meeting /from 0900 /to"));
+    }
+
+    @Test
+    public void parseIndex_missingNonPositiveAndOverflow_exceptionThrown() {
+        assertThrows(PeterException.class, () -> Parser.parseIndex(null));
+        assertThrows(PeterException.class, () -> Parser.parseIndex("mark"));
+        assertThrows(PeterException.class, () -> Parser.parseIndex("mark 0"));
+        assertThrows(PeterException.class, () -> Parser.parseIndex("mark -1"));
+        assertThrows(PeterException.class, () -> Parser.parseIndex("mark 999999999999999999999999"));
+    }
+
+    @Test
+    public void parseIndex_leadingAndRepeatedWhitespace_success() throws PeterException {
+        assertEquals(41, Parser.parseIndex("  mark     42  "));
+    }
+
+    @Test
+    public void parseViewDate_validMissingAndExtraValues_handledCorrectly() throws PeterException {
+        assertEquals(LocalDate.of(2026, 9, 10), Parser.parseViewDate("  VIEW   2026-09-10  "));
+        assertThrows(PeterException.class, () -> Parser.parseViewDate("view"));
+        assertThrows(PeterException.class, () -> Parser.parseViewDate("view 2026-09-10 extra"));
+    }
+
+    @Test
+    public void parseFindKeyword_validAndInvalidValues_handledCorrectly() throws PeterException {
+        assertEquals("read book", Parser.parseFindKeyword(" find   read   book "));
+        assertThrows(PeterException.class, () -> Parser.parseFindKeyword("find"));
+        assertThrows(PeterException.class, () -> Parser.parseFindKeyword("find read | book"));
+    }
+
+    @Test
+    public void requireNoArguments_nullBlankAndValidCommands_handledCorrectly() throws PeterException {
+        Parser.requireNoArguments("  LIST  ", "list");
+        Parser.requireNoArguments("", "");
+        assertThrows(PeterException.class, () -> Parser.requireNoArguments(null, "list"));
+        assertThrows(PeterException.class, () -> Parser.requireNoArguments("sort", "list"));
     }
 }

@@ -1,5 +1,7 @@
 package peter.command;
 
+import java.util.Locale;
+
 /**
  * Lists the commands supported by the chatbot.
  */
@@ -28,7 +30,7 @@ public enum Command {
             return UNKNOWN;
         }
 
-        String firstWord = input.trim().split("\\s+")[0].toUpperCase();
+        String firstWord = input.trim().split("\\s+")[0].toUpperCase(Locale.ROOT);
         try {
             return Command.valueOf(firstWord);
         } catch (IllegalArgumentException e) {

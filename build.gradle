@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id 'checkstyle'
+    id 'jacoco'
     id 'application'
     id 'com.gradleup.shadow' version '9.5.1'
 }
@@ -55,6 +56,49 @@ test {
         showStandardStreams = false
     }
 }
+
+def coverageExclusions = [
+    'peter/Launcher.class',
+    'peter/Main.class',
+    'peter/ui/DialogBox.class',
+    'peter/ui/MainWindow.class'
+]
+
+jacocoTestReport {
+    dependsOn test
+    classDirectories.setFrom(files(sourceSets.main.output.classesDirs).asFileTree.matching {
+        exclude coverageExclusions
+    })
+
+    reports {
+        xml.required = true
+        html.required = true
+    }
+}
+
+jacocoTestCoverageVerification {
+    dependsOn test
+    classDirectories.setFrom(files(sourceSets.main.output.classesDirs).asFileTree.matching {
+        exclude coverageExclusions
+    })
+
+    violationRules {
+        rule {
+            limit {
+                counter = 'LINE'
+                value = 'COVEREDRATIO'
+                minimum = 0.95
+            }
+            limit {
+                counter = 'BRANCH'
+                value = 'COVEREDRATIO'
+                minimum = 0.90
+            }
+        }
+    }
+}
+
+check.dependsOn jacocoTestCoverageVerification
 
 application {
     mainClass = 'peter.Launcher'

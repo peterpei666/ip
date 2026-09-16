@@ -51,7 +51,9 @@ public class TaskList {
      * @throws PeterException If an identical task is already present.
      */
     public void add(Task task) throws PeterException {
-        assert task != null : "Cannot add a null task";
+        if (task == null) {
+            throw new PeterException("Peter can't chart an empty task.");
+        }
         if (tasks.stream().anyMatch(existingTask -> existingTask.hasSameDetails(task))) {
             throw new PeterException("That waypoint is already on the map, so I didn't add it twice.");
         }
@@ -113,7 +115,15 @@ public class TaskList {
         }
     }
 
-    public Task get(int index) {
+    /**
+     * Returns the task at a validated zero-based index.
+     *
+     * @param index Zero-based task index.
+     * @return Task at the requested index.
+     * @throws PeterException If the index is outside the task list.
+     */
+    public Task get(int index) throws PeterException {
+        validateIndex(index);
         return tasks.get(index);
     }
 

@@ -143,54 +143,77 @@ public class Peter {
         if (tasks.isEmpty()) {
             return "The route is clear—there are no tasks on the map.";
         }
+        List<Task> currentTasks = tasks.getTasks();
         StringBuilder response = new StringBuilder("Here's the course we've charted:");
-        for (int i = 0; i < tasks.size(); i++) {
-            response.append(System.lineSeparator()).append(i + 1).append('.').append(tasks.get(i));
+        for (int i = 0; i < currentTasks.size(); i++) {
+            response.append(System.lineSeparator()).append(i + 1).append('.').append(currentTasks.get(i));
         }
         return response.toString();
     }
 
     private String handleMark(String input) throws PeterException {
         int index = Parser.parseIndex(input);
+        boolean wasDone = tasks.get(index).isDone();
         Task task = tasks.mark(index);
-        storage.save(tasks);
+        try {
+            storage.save(tasks);
+        } catch (PeterException e) {
+            if (!wasDone) {
+                task.markAsUndone();
+            }
+            throw e;
+        }
         return "Milestone reached! I've marked this task complete:\n  " + task;
     }
 
     private String handleUnmark(String input) throws PeterException {
         int index = Parser.parseIndex(input);
+        boolean wasDone = tasks.get(index).isDone();
         Task task = tasks.unmark(index);
-        storage.save(tasks);
+        try {
+            storage.save(tasks);
+        } catch (PeterException e) {
+            if (wasDone) {
+                task.markAsDone();
+            }
+            throw e;
+        }
         return "Course adjusted. This task is back on the route:\n  " + task;
     }
 
     private String handleTodo(String input) throws PeterException {
         Task task = Parser.parseTodo(input);
-        tasks.add(task);
-        storage.save(tasks);
+        addAndSave(task);
         return getTaskAddedMessage(task);
     }
 
     private String handleDeadline(String input) throws PeterException {
         Task task = Parser.parseDeadline(input);
-        tasks.add(task);
-        storage.save(tasks);
+        addAndSave(task);
         return getTaskAddedMessage(task);
     }
 
     private String handleEvent(String input) throws PeterException {
         Task task = Parser.parseEvent(input);
-        tasks.add(task);
-        storage.save(tasks);
+        addAndSave(task);
         return getTaskAddedMessage(task);
     }
 
     private String handleDelete(String input) throws PeterException {
         int index = Parser.parseIndex(input);
-        Task removedTask = tasks.delete(index);
-        storage.save(tasks);
+        TaskList updatedTasks = new TaskList(tasks.getTasks());
+        Task removedTask = updatedTasks.delete(index);
+        storage.save(updatedTasks);
+        tasks = updatedTasks;
         return "Route updated. I've removed this task:\n  " + removedTask
                 + "\nThere are now " + tasks.size() + " tasks on the map.";
+    }
+
+    private void addAndSave(Task task) throws PeterException {
+        TaskList updatedTasks = new TaskList(tasks.getTasks());
+        updatedTasks.add(task);
+        storage.save(updatedTasks);
+        tasks = updatedTasks;
     }
 
     /**
@@ -230,8 +253,10 @@ public class Peter {
      * @return A message containing the sorted task list.
      */
     private String handleSort() throws PeterException {
-        tasks.sortByDeadline();
-        storage.save(tasks);
+        TaskList updatedTasks = new TaskList(tasks.getTasks());
+        updatedTasks.sortByDeadline();
+        storage.save(updatedTasks);
+        tasks = updatedTasks;
         return formatTasks(tasks.getTasks(), "The route is clear—there are no deadlines to arrange.",
                 "Course arranged! Deadlines now run chronologically:");
     }

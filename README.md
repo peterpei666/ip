@@ -67,4 +67,12 @@ Run the automated tests and Checkstyle checks before submitting changes:
 ./gradlew test checkstyleMain checkstyleTest
 ```
 
-Keeping these checks green makes the project easier to understand and maintain.
+Generate the JaCoCo coverage report with:
+
+```bash
+./gradlew jacocoTestReport
+```
+
+The HTML report is written to `build/reports/jacoco/test/html/index.html`. The `check` task enforces at least
+95% line coverage and 90% branch coverage for automatically testable, non-GUI code. Keeping these checks green
+makes the project easier to understand and maintain.
