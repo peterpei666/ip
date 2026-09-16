@@ -41,10 +41,6 @@ public class Ui {
         System.out.println("     " + message);
     }
 
-    public void showLoadingError() {
-        System.out.println("     [Log warning] I couldn't read the saved route, so we're starting with a clear map.");
-    }
-
     /**
      * Prints tasks found on a specific date.
      *

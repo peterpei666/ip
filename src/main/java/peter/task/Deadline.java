@@ -3,6 +3,7 @@ package peter.task;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.time.format.ResolverStyle;
 
 import peter.exception.PeterException;
 
@@ -11,8 +12,10 @@ import peter.exception.PeterException;
  * A deadline has a time besides the basic information of Task.
  */
 public class Deadline extends Task {
-    private static final DateTimeFormatter INPUT_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HHmm");
-    private static final DateTimeFormatter INPUT_DATE_ONLY_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    private static final DateTimeFormatter INPUT_FORMATTER = DateTimeFormatter.ofPattern("uuuu-MM-dd HHmm")
+            .withResolverStyle(ResolverStyle.STRICT);
+    private static final DateTimeFormatter INPUT_DATE_ONLY_FORMATTER = DateTimeFormatter.ofPattern("uuuu-MM-dd")
+            .withResolverStyle(ResolverStyle.STRICT);
     private static final DateTimeFormatter OUTPUT_FORMATTER = DateTimeFormatter.ofPattern("MMM dd yyyy, h:mm a");
     private static final DateTimeFormatter FILE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HHmm");
 
@@ -54,6 +57,11 @@ public class Deadline extends Task {
      */
     public LocalDateTime getBy() {
         return this.by;
+    }
+
+    @Override
+    public boolean hasSameDetails(Task other) {
+        return super.hasSameDetails(other) && by.equals(((Deadline) other).by);
     }
 
     @Override

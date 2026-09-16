@@ -47,6 +47,19 @@ public class Task {
         return this.description;
     }
 
+    /**
+     * Checks whether another task has the same type and user-provided details.
+     * Completion status is intentionally ignored when detecting duplicates.
+     *
+     * @param other Task to compare.
+     * @return True when both tasks represent the same waypoint.
+     */
+    public boolean hasSameDetails(Task other) {
+        return other != null
+                && getClass().equals(other.getClass())
+                && description.equalsIgnoreCase(other.description);
+    }
+
     @Override
     public String toString() {
         return "[" + getStatusIcon() + "] " + this.description;

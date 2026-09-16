@@ -41,4 +41,43 @@ public class PeterTest {
         assertTrue(welcomeMessage.contains("Peter"));
         assertTrue(welcomeMessage.contains("chart"));
     }
+
+    @Test
+    public void getResponseResult_noArgumentCommandWithExtraText_marksResponseAsError() {
+        Peter peter = new Peter(tempDir.resolve("tasks.txt").toString());
+
+        Peter.Response response = peter.getResponseResult("list please");
+
+        assertTrue(response.isError());
+    }
+
+    @Test
+    public void getResponseResult_duplicateTask_marksSecondResponseAsError() {
+        Peter peter = new Peter(tempDir.resolve("tasks.txt").toString());
+        peter.getResponseResult("todo read book");
+
+        Peter.Response response = peter.getResponseResult("todo READ BOOK");
+
+        assertTrue(response.isError());
+        assertTrue(response.message().contains("already"));
+    }
+
+    @Test
+    public void getResponseResult_unwritableDestination_reportsSaveError() {
+        Peter peter = new Peter(tempDir.toString());
+
+        Peter.Response response = peter.getResponseResult("todo read book");
+
+        assertTrue(response.isError());
+        assertTrue(response.message().contains("couldn't save"));
+    }
+
+    @Test
+    public void getLoadingWarning_storagePathIsDirectory_returnsWarning() {
+        Peter peter = new Peter(tempDir.toString());
+
+        String warning = peter.getLoadingWarning();
+
+        assertTrue(warning.contains("isn't a regular file"));
+    }
 }

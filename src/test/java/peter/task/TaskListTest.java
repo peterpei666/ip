@@ -24,7 +24,7 @@ public class TaskListTest {
     }
 
     @Test
-    public void delete_invalidIndex_exceptionThrown() {
+    public void delete_invalidIndex_exceptionThrown() throws PeterException {
         TaskList tasks = new TaskList();
         tasks.add(new Todo("read book"));
 
@@ -35,6 +35,17 @@ public class TaskListTest {
         assertThrows(PeterException.class, () -> {
             tasks.delete(-1);
         });
+    }
+
+    @Test
+    public void add_duplicateTask_exceptionThrown() throws PeterException {
+        TaskList tasks = new TaskList();
+        tasks.add(new Todo("read book"));
+
+        assertThrows(PeterException.class, () -> {
+            tasks.add(new Todo("READ BOOK"));
+        });
+        assertEquals(1, tasks.size());
     }
 
     @Test

@@ -45,6 +45,9 @@ public class MainWindow {
      */
     public void setPeter(Peter p) {
         peter = p;
+        if (peter.getLoadingWarning() != null) {
+            dialogContainer.getChildren().add(DialogBox.getErrorDialog(peter.getLoadingWarning(), peterImage));
+        }
         dialogContainer.getChildren().add(DialogBox.getPeterDialog(peter.getWelcomeMessage(), peterImage));
     }
 
@@ -66,7 +69,7 @@ public class MainWindow {
                         : DialogBox.getPeterDialog(response.message(), peterImage)
         );
         userInput.clear();
-        if (Command.fromString(input) == Command.BYE) {
+        if (Command.fromString(input) == Command.BYE && !response.isError()) {
             Platform.exit();
         }
     }

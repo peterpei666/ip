@@ -48,9 +48,13 @@ public class TaskList {
      * Adds a task to the end of the list.
      *
      * @param task Task to add.
+     * @throws PeterException If an identical task is already present.
      */
-    public void add(Task task) {
+    public void add(Task task) throws PeterException {
         assert task != null : "Cannot add a null task";
+        if (tasks.stream().anyMatch(existingTask -> existingTask.hasSameDetails(task))) {
+            throw new PeterException("That waypoint is already on the map, so I didn't add it twice.");
+        }
         tasks.add(task);
     }
 

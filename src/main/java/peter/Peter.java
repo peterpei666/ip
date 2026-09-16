@@ -7,6 +7,7 @@ import peter.command.Command;
 import peter.exception.PeterException;
 import peter.parser.Parser;
 import peter.storage.Storage;
+import peter.storage.Storage.LoadResult;
 import peter.task.Task;
 import peter.task.TaskList;
 import peter.ui.Ui;
@@ -21,7 +22,7 @@ public class Peter {
     private final Storage storage;
     private TaskList tasks;
     private final Ui ui;
-    private boolean hasLoadingError;
+    private String loadingWarning;
 
     /**
      * Constructs a chatbot.
@@ -32,9 +33,14 @@ public class Peter {
         ui = new Ui();
         storage = new Storage(filePath);
         try {
-            tasks = new TaskList(storage.load());
+            LoadResult loadResult = storage.load();
+            tasks = new TaskList(loadResult.tasks());
+            if (loadResult.skippedEntries() > 0) {
+                loadingWarning = "[Log warning] I skipped " + loadResult.skippedEntries()
+                        + " damaged or duplicate saved entries; the rest loaded safely.";
+            }
         } catch (PeterException e) {
-            hasLoadingError = true;
+            loadingWarning = "[Log warning] " + e.getMessage() + " Starting with a clear map.";
             tasks = new TaskList();
         }
     }
@@ -43,8 +49,8 @@ public class Peter {
      * Runs the chatbot's command loop.
      */
     public void run() {
-        if (hasLoadingError) {
-            ui.showLoadingError();
+        if (loadingWarning != null) {
+            ui.showError(loadingWarning);
         }
         ui.showWelcome();
         boolean isExit = false;
@@ -56,8 +62,9 @@ public class Peter {
             }
 
             ui.showLine();
-            ui.showMessage(getResponse(fullCommand));
-            isExit = Command.fromString(fullCommand) == Command.BYE;
+            Response response = getResponseResult(fullCommand);
+            ui.showMessage(response.message());
+            isExit = Command.fromString(fullCommand) == Command.BYE && !response.isError();
             ui.showLine();
         }
         ui.close();
@@ -83,8 +90,14 @@ public class Peter {
         try {
             Command command = Command.fromString(fullCommand);
             String message = switch (command) {
-                case BYE -> "Journey paused. Your course is saved—see you on the next leg!";
-                case LIST -> handleList();
+                case BYE -> {
+                    Parser.requireNoArguments(fullCommand, "bye");
+                    yield "Journey paused. Your course is saved—see you on the next leg!";
+                }
+                case LIST -> {
+                    Parser.requireNoArguments(fullCommand, "list");
+                    yield handleList();
+                }
                 case MARK -> handleMark(fullCommand);
                 case UNMARK -> handleUnmark(fullCommand);
                 case TODO -> handleTodo(fullCommand);
@@ -93,27 +106,37 @@ public class Peter {
                 case DELETE -> handleDelete(fullCommand);
                 case VIEW -> handleView(fullCommand);
                 case FIND -> handleFind(fullCommand);
-                case SORT -> handleSort();
+                case SORT -> {
+                    Parser.requireNoArguments(fullCommand, "sort");
+                    yield handleSort();
+                }
                 default -> throw new PeterException(
                         "That route isn't on my map yet. Try a command such as list, todo, or deadline.");
             };
             return new Response(message, false);
         } catch (PeterException e) {
             return new Response(e.getMessage(), true);
+        } catch (RuntimeException e) {
+            return new Response("I hit an unexpected obstacle. Please check the command and try again.", true);
         }
     }
 
     /**
      * Returns the greeting shown when the GUI starts.
      *
-     * @return Peter's welcome message, including a loading warning when needed.
+     * @return Peter's welcome message.
      */
     public String getWelcomeMessage() {
-        if (hasLoadingError) {
-            return "[Log warning] I couldn't read the saved route, so we're starting with a clear map.\n"
-                    + WELCOME_MESSAGE;
-        }
         return WELCOME_MESSAGE;
+    }
+
+    /**
+     * Returns a recoverable storage warning encountered during startup.
+     *
+     * @return Warning text, or null when every saved entry loaded successfully.
+     */
+    public String getLoadingWarning() {
+        return loadingWarning;
     }
 
     private String handleList() {
@@ -206,7 +229,7 @@ public class Peter {
      *
      * @return A message containing the sorted task list.
      */
-    private String handleSort() {
+    private String handleSort() throws PeterException {
         tasks.sortByDeadline();
         storage.save(tasks);
         return formatTasks(tasks.getTasks(), "The route is clear—there are no deadlines to arrange.",
