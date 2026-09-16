@@ -69,9 +69,19 @@ public class Peter {
      * @return Peter's response text.
      */
     public String getResponse(String fullCommand) {
+        return getResponseResult(fullCommand).message();
+    }
+
+    /**
+     * Generates a response together with presentation metadata for the GUI.
+     *
+     * @param fullCommand Raw command entered by the user.
+     * @return Response text and whether it represents an input error.
+     */
+    public Response getResponseResult(String fullCommand) {
         try {
             Command command = Command.fromString(fullCommand);
-            return switch (command) {
+            String message = switch (command) {
                 case BYE -> "Bye. Hope to see you again soon!";
                 case LIST -> handleList();
                 case MARK -> handleMark(fullCommand);
@@ -85,8 +95,9 @@ public class Peter {
                 case SORT -> handleSort();
                 default -> throw new PeterException("OOPS!!! I'm sorry, but I don't know what that means :-(");
             };
+            return new Response(message, false);
         } catch (PeterException e) {
-            return e.getMessage();
+            return new Response(e.getMessage(), true);
         }
     }
 
@@ -208,6 +219,15 @@ public class Peter {
             response.append(System.lineSeparator()).append(i + 1).append('.').append(matchingTasks.get(i));
         }
         return response.toString();
+    }
+
+    /**
+     * A command response and the information needed to present it appropriately.
+     *
+     * @param message Text to display.
+     * @param isError Whether the response describes invalid user input.
+     */
+    public record Response(String message, boolean isError) {
     }
 
     public static void main(String[] args) {

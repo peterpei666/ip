@@ -6,7 +6,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import peter.Peter;
 import peter.command.Command;
@@ -14,7 +13,7 @@ import peter.command.Command;
 /**
  * Controller for Peter's main GUI.
  */
-public class MainWindow extends AnchorPane {
+public class MainWindow {
     @FXML
     private ScrollPane scrollPane;
     @FXML
@@ -26,12 +25,17 @@ public class MainWindow extends AnchorPane {
 
     private Peter peter;
 
-    private final Image userImage = new Image(this.getClass().getResourceAsStream("/images/DaUser.png"));
     private final Image peterImage = new Image(this.getClass().getResourceAsStream("/images/DaPeter.png"));
 
+    /**
+     * Configures automatic scrolling and puts keyboard focus in the command field.
+     */
     @FXML
     public void initialize() {
-        scrollPane.vvalueProperty().bind(dialogContainer.heightProperty());
+        dialogContainer.heightProperty().addListener((observable, oldHeight, newHeight) -> {
+            scrollPane.setVvalue(1.0);
+        });
+        Platform.runLater(userInput::requestFocus);
     }
 
     /**
@@ -54,10 +58,12 @@ public class MainWindow extends AnchorPane {
             userInput.clear();
             return;
         }
-        String response = peter.getResponse(input);
+        Peter.Response response = peter.getResponseResult(input);
         dialogContainer.getChildren().addAll(
-                DialogBox.getUserDialog(input, userImage),
-                DialogBox.getPeterDialog(response, peterImage)
+                DialogBox.getUserDialog(input),
+                response.isError()
+                        ? DialogBox.getErrorDialog(response.message(), peterImage)
+                        : DialogBox.getPeterDialog(response.message(), peterImage)
         );
         userInput.clear();
         if (Command.fromString(input) == Command.BYE) {

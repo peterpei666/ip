@@ -1,18 +1,15 @@
 package peter.ui;
 
 import java.io.IOException;
-import java.util.Collections;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.shape.Circle;
 
 /**
  * Represents a dialog box containing a speaker image and message text.
@@ -35,28 +32,42 @@ public class DialogBox extends HBox {
 
         dialog.setText(text);
         displayPicture.setImage(img);
+        dialog.maxWidthProperty().bind(widthProperty().subtract(76));
+        displayPicture.setClip(new Circle(18, 18, 18));
     }
 
     /**
-     * Flips the dialog box so Peter's image appears on the left.
+     * Applies the compact, right-aligned style used for user commands.
      */
-    private void flip() {
-        ObservableList<Node> tmp = FXCollections.observableArrayList(this.getChildren());
-        Collections.reverse(tmp);
-        getChildren().setAll(tmp);
+    private void styleAsUser() {
+        setAlignment(Pos.TOP_RIGHT);
+        getStyleClass().add("user-dialog");
+        dialog.getStyleClass().add("user-message");
+        displayPicture.setManaged(false);
+        displayPicture.setVisible(false);
+    }
+
+    /**
+     * Applies the left-aligned assistant style, with optional error emphasis.
+     *
+     * @param isError Whether this response describes invalid input.
+     */
+    private void styleAsPeter(boolean isError) {
         setAlignment(Pos.TOP_LEFT);
-        dialog.getStyleClass().add("reply-label");
+        getStyleClass().add("peter-dialog");
+        dialog.getStyleClass().add(isError ? "error-message" : "peter-message");
     }
 
     /**
      * Creates a dialog box for a user message.
      *
      * @param text Message text.
-     * @param img User image.
      * @return A right-aligned user dialog box.
      */
-    public static DialogBox getUserDialog(String text, Image img) {
-        return new DialogBox(text, img);
+    public static DialogBox getUserDialog(String text) {
+        DialogBox dialogBox = new DialogBox(text, null);
+        dialogBox.styleAsUser();
+        return dialogBox;
     }
 
     /**
@@ -67,8 +78,21 @@ public class DialogBox extends HBox {
      * @return A left-aligned Peter dialog box.
      */
     public static DialogBox getPeterDialog(String text, Image img) {
-        var db = new DialogBox(text, img);
-        db.flip();
-        return db;
+        DialogBox dialogBox = new DialogBox(text, img);
+        dialogBox.styleAsPeter(false);
+        return dialogBox;
+    }
+
+    /**
+     * Creates an emphasized dialog box for an invalid command.
+     *
+     * @param text Error text.
+     * @param img Peter's image.
+     * @return A left-aligned error dialog box.
+     */
+    public static DialogBox getErrorDialog(String text, Image img) {
+        DialogBox dialogBox = new DialogBox(text, img);
+        dialogBox.styleAsPeter(true);
+        return dialogBox;
     }
 }
