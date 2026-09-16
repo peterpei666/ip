@@ -105,7 +105,7 @@ public class TaskList {
      */
     private void validateIndex(int index) throws PeterException {
         if (index < 0 || index >= tasks.size()) {
-            throw new PeterException("OOPS!!! Task number " + (index + 1) + " does not exist.");
+            throw new PeterException("Waypoint " + (index + 1) + " isn't on the current map.");
         }
     }
 

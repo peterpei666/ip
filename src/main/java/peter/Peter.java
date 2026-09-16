@@ -15,7 +15,8 @@ import peter.ui.Ui;
  * The main class of the chatbot.
  */
 public class Peter {
-    private static final String WELCOME_MESSAGE = "Hello! I'm Peter.\nWhat can I do for you?";
+    private static final String WELCOME_MESSAGE = "Welcome aboard—I'm Peter, your task navigator."
+            + "\nWhat shall we chart today?";
 
     private final Storage storage;
     private TaskList tasks;
@@ -82,7 +83,7 @@ public class Peter {
         try {
             Command command = Command.fromString(fullCommand);
             String message = switch (command) {
-                case BYE -> "Bye. Hope to see you again soon!";
+                case BYE -> "Journey paused. Your course is saved—see you on the next leg!";
                 case LIST -> handleList();
                 case MARK -> handleMark(fullCommand);
                 case UNMARK -> handleUnmark(fullCommand);
@@ -93,7 +94,8 @@ public class Peter {
                 case VIEW -> handleView(fullCommand);
                 case FIND -> handleFind(fullCommand);
                 case SORT -> handleSort();
-                default -> throw new PeterException("OOPS!!! I'm sorry, but I don't know what that means :-(");
+                default -> throw new PeterException(
+                        "That route isn't on my map yet. Try a command such as list, todo, or deadline.");
             };
             return new Response(message, false);
         } catch (PeterException e) {
@@ -108,16 +110,17 @@ public class Peter {
      */
     public String getWelcomeMessage() {
         if (hasLoadingError) {
-            return "[Warning] Failed to load data from storage. Starting with empty list.\n" + WELCOME_MESSAGE;
+            return "[Log warning] I couldn't read the saved route, so we're starting with a clear map.\n"
+                    + WELCOME_MESSAGE;
         }
         return WELCOME_MESSAGE;
     }
 
     private String handleList() {
         if (tasks.isEmpty()) {
-            return "Your task list is currently empty!";
+            return "The route is clear—there are no tasks on the map.";
         }
-        StringBuilder response = new StringBuilder("Here are the tasks in your list:");
+        StringBuilder response = new StringBuilder("Here's the course we've charted:");
         for (int i = 0; i < tasks.size(); i++) {
             response.append(System.lineSeparator()).append(i + 1).append('.').append(tasks.get(i));
         }
@@ -128,14 +131,14 @@ public class Peter {
         int index = Parser.parseIndex(input);
         Task task = tasks.mark(index);
         storage.save(tasks);
-        return "Nice! I've marked this task as done:\n  " + task;
+        return "Milestone reached! I've marked this task complete:\n  " + task;
     }
 
     private String handleUnmark(String input) throws PeterException {
         int index = Parser.parseIndex(input);
         Task task = tasks.unmark(index);
         storage.save(tasks);
-        return "OK, I've marked this task as not done yet:\n  " + task;
+        return "Course adjusted. This task is back on the route:\n  " + task;
     }
 
     private String handleTodo(String input) throws PeterException {
@@ -163,8 +166,8 @@ public class Peter {
         int index = Parser.parseIndex(input);
         Task removedTask = tasks.delete(index);
         storage.save(tasks);
-        return "Noted. I've removed this task:\n  " + removedTask
-                + "\nNow you have " + tasks.size() + " tasks in the list.";
+        return "Route updated. I've removed this task:\n  " + removedTask
+                + "\nThere are now " + tasks.size() + " tasks on the map.";
     }
 
     /**
@@ -176,13 +179,13 @@ public class Peter {
     private String handleFind(String fullCommand) throws PeterException {
         String keyword = Parser.parseFindKeyword(fullCommand);
         List<Task> matchingTasks = tasks.findTasks(keyword);
-        return formatTasks(matchingTasks, "No matching tasks found in your list!",
-                "Here are the matching tasks in your list:");
+        return formatTasks(matchingTasks, "I searched the map, but found no tasks matching that keyword.",
+                "These tasks match your search:");
     }
 
     private String getTaskAddedMessage(Task task) {
-        return "Got it. I've added this task:\n  " + task
-                + "\nNow you have " + tasks.size() + " tasks in the list.";
+        return "Waypoint charted! I've added this task:\n  " + task
+                + "\nThere are now " + tasks.size() + " tasks on the map.";
     }
 
     /**
@@ -194,8 +197,8 @@ public class Peter {
     private String handleView(String fullCommand) throws PeterException {
         LocalDate date = Parser.parseViewDate(fullCommand);
         List<Task> matchingTasks = tasks.getTasksOnDate(date);
-        return formatTasks(matchingTasks, "No tasks found on this date!",
-                "Here are the tasks on this date:");
+        return formatTasks(matchingTasks, "No tasks are charted for that date.",
+                "Here's the route for that date:");
     }
 
     /**
@@ -206,8 +209,8 @@ public class Peter {
     private String handleSort() {
         tasks.sortByDeadline();
         storage.save(tasks);
-        return formatTasks(tasks.getTasks(), "Your task list is currently empty!",
-                "I've sorted your deadlines chronologically:");
+        return formatTasks(tasks.getTasks(), "The route is clear—there are no deadlines to arrange.",
+                "Course arranged! Deadlines now run chronologically:");
     }
 
     private String formatTasks(List<Task> matchingTasks, String emptyMessage, String heading) {

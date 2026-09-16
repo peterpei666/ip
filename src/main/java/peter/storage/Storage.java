@@ -82,7 +82,7 @@ public class Storage {
                 writer.write(task.toFileFormat() + System.lineSeparator());
             }
         } catch (IOException e) {
-            System.out.println("     [Error] Failed to save tasks to file: " + e.getMessage());
+            System.out.println("     [Log error] Peter couldn't save the current route: " + e.getMessage());
         }
     }
 

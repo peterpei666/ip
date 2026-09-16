@@ -17,7 +17,7 @@
         <VBox spacing="1.0">
           <children>
             <Label styleClass="app-title" text="Peter" />
-            <Label styleClass="app-subtitle" text="Personal task assistant" />
+            <Label styleClass="app-subtitle" text="Your steady task navigator" />
           </children>
         </VBox>
       </children>

@@ -24,7 +24,7 @@ public class Parser {
     public static Task parseTodo(String input) throws PeterException {
         String description = input.substring(4).trim();
         if (description.isEmpty()) {
-            throw new PeterException("OOPS!!! The description of a todo cannot be empty.");
+            throw new PeterException("That waypoint needs a description. Try: todo read book");
         }
         assert !description.isBlank() : "Todo description should have been validated";
         return new Todo(description);
@@ -42,7 +42,8 @@ public class Parser {
         String[] parts = body.split(" /by ", 2);
 
         if (parts.length < 2 || parts[0].trim().isEmpty() || parts[1].trim().isEmpty()) {
-            throw new PeterException("OOPS!!! The description and date of a deadline cannot be empty.");
+            throw new PeterException("A deadline needs a task and arrival time. "
+                    + "Try: deadline return book /by 2026-09-10 1800");
         }
 
         assert !parts[0].isBlank() : "Deadline description should have been validated";
@@ -60,15 +61,15 @@ public class Parser {
     public static Task parseEvent(String input) throws PeterException {
         String content = input.substring(5).trim();
         if (content.isEmpty()) {
-            throw new PeterException("OOPS!!! The description of an event cannot be empty.");
+            throw new PeterException("That event needs a description before I can chart it.");
         }
         String[] parts = content.split(" /from ");
         if (parts.length < 2 || parts[0].trim().isEmpty()) {
-            throw new PeterException("OOPS!!! Please use format: event description /from start /to end");
+            throw new PeterException("I need the full route. Try: event meeting /from 1400 /to 1600");
         }
         String[] timeParts = parts[1].split(" /to ");
         if (timeParts.length < 2 || timeParts[0].trim().isEmpty() || timeParts[1].trim().isEmpty()) {
-            throw new PeterException("OOPS!!! Please specify both /from and /to time ranges.");
+            throw new PeterException("Please chart both the /from and /to times for that event.");
         }
         assert !parts[0].isBlank() : "Event description should have been validated";
         assert !timeParts[0].isBlank() : "Event start time should have been validated";
@@ -86,12 +87,12 @@ public class Parser {
     public static int parseIndex(String input) throws PeterException {
         String[] parts = input.split("\\s+");
         if (parts.length < 2) {
-            throw new PeterException("OOPS!!! Please specify the task number.");
+            throw new PeterException("Which waypoint? Please include a task number.");
         }
         try {
             return Integer.parseInt(parts[1]) - 1;
         } catch (NumberFormatException e) {
-            throw new PeterException("OOPS!!! Task index must be a valid integer.");
+            throw new PeterException("That waypoint number isn't valid. Please use a whole number.");
         }
     }
 
@@ -105,12 +106,12 @@ public class Parser {
     public static LocalDate parseViewDate(String input) throws PeterException {
         String[] parts = input.trim().split("\\s+", 2);
         if (parts.length < 2 || parts[1].trim().isEmpty()) {
-            throw new PeterException("OOPS!!! Please specify a date in yyyy-MM-dd format (e.g., view 2019-12-02).");
+            throw new PeterException("Which date should I scout? Try: view 2026-09-10");
         }
         try {
             return LocalDate.parse(parts[1].trim());
         } catch (DateTimeParseException e) {
-            throw new PeterException("OOPS!!! Invalid date format. Please use yyyy-MM-dd (e.g., 2019-12-02).");
+            throw new PeterException("I couldn't read that date. Please use yyyy-MM-dd, such as 2026-09-10.");
         }
     }
 
@@ -124,7 +125,7 @@ public class Parser {
     public static String parseFindKeyword(String input) throws PeterException {
         String[] parts = input.trim().split("\\s+", 2);
         if (parts.length < 2 || parts[1].trim().isEmpty()) {
-            throw new PeterException("OOPS!!! The description of a find command cannot be empty.");
+            throw new PeterException("What should I scout for? Try: find book");
         }
         return parts[1].trim();
     }

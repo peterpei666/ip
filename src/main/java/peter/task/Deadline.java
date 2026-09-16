@@ -43,7 +43,7 @@ public class Deadline extends Task {
             }
         } catch (DateTimeParseException e) {
             throw new PeterException(
-                    "OOPS!!! Please enter date time in format: yyyy-MM-dd HHmm (e.g., 2019-12-02 1800)");
+                    "I couldn't chart that arrival time. Use yyyy-MM-dd HHmm, such as 2026-09-10 1800.");
         }
     }
 

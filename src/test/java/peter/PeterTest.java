@@ -19,6 +19,7 @@ public class PeterTest {
         Peter.Response response = peter.getResponseResult("abracadabra");
 
         assertTrue(response.isError());
+        assertTrue(response.message().contains("route"));
     }
 
     @Test
@@ -28,5 +29,16 @@ public class PeterTest {
         Peter.Response response = peter.getResponseResult("list");
 
         assertFalse(response.isError());
+        assertTrue(response.message().contains("map"));
+    }
+
+    @Test
+    public void getWelcomeMessage_usesPeterNavigatorPersonality() {
+        Peter peter = new Peter(tempDir.resolve("tasks.txt").toString());
+
+        String welcomeMessage = peter.getWelcomeMessage();
+
+        assertTrue(welcomeMessage.contains("Peter"));
+        assertTrue(welcomeMessage.contains("chart"));
     }
 }

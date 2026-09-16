@@ -2,7 +2,7 @@
 
 > “Your mind is for having ideas, not holding them.” — David Allen ([source](https://gettingthingsdone.com/))
 
-Peter is a task manager with both a JavaFX GUI and a text-based interface. It helps you keep track of todos, deadlines, and events while remaining *simple*, ~~complicated~~ easy to learn, and quick to use. 🚀
+Peter is a calm task navigator with both a JavaFX GUI and a text-based interface. It helps you chart todos, deadlines, and events while keeping every response clear, encouraging, and quick to scan. 🧭
 
 ## Features
 

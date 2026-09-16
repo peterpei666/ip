@@ -28,8 +28,8 @@ public class Ui {
      */
     public void showWelcome() {
         System.out.println(LOGO);
-        System.out.println(" Hello! I'm Peter.");
-        System.out.println(" What can I do for you?");
+        System.out.println(" Welcome aboard—I'm Peter, your task navigator.");
+        System.out.println(" What shall we chart today?");
         showLine();
     }
 
@@ -42,7 +42,7 @@ public class Ui {
     }
 
     public void showLoadingError() {
-        System.out.println("     [Warning] Failed to load data from storage. Starting with empty list.");
+        System.out.println("     [Log warning] I couldn't read the saved route, so we're starting with a clear map.");
     }
 
     /**
@@ -52,10 +52,10 @@ public class Ui {
      */
     public void showTasksOnDate(List<Task> tasks) {
         if (tasks.isEmpty()) {
-            System.out.println("     No tasks found on this date!");
+            System.out.println("     No tasks are charted for that date.");
             return;
         }
-        System.out.println("     Here are the tasks on this date:");
+        System.out.println("     Here's the route for that date:");
         for (int i = 0; i < tasks.size(); i++) {
             System.out.println("     " + (i + 1) + "." + tasks.get(i));
         }
@@ -68,10 +68,10 @@ public class Ui {
      */
     public void showFoundTasks(List<Task> matchingTasks) {
         if (matchingTasks.isEmpty()) {
-            System.out.println("     No matching tasks found in your list!");
+            System.out.println("     I searched the map, but found no tasks matching that keyword.");
             return;
         }
-        System.out.println("     Here are the matching tasks in your list:");
+        System.out.println("     These tasks match your search:");
         for (int i = 0; i < matchingTasks.size(); i++) {
             System.out.println("     " + (i + 1) + "." + matchingTasks.get(i));
         }

@@ -27,7 +27,7 @@ public class ParserTest {
         PeterException exception = assertThrows(PeterException.class, () -> {
             Parser.parseTodo("todo   ");
         });
-        assertEquals("OOPS!!! The description of a todo cannot be empty.", exception.getMessage());
+        assertEquals("That waypoint needs a description. Try: todo read book", exception.getMessage());
     }
 
     @Test
